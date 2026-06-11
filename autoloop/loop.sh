@@ -15,6 +15,14 @@ if [[ ! "$PLAN_DIR" =~ ^plans/[a-zA-Z0-9_-]+$ ]]; then
     echo "error: PLAN_DIR must match plans/<name> (alphanumeric, hyphens, underscores only): $PLAN_DIR" >&2
     exit 1
 fi
+# Guard against symlinks pointing outside the repo (the regex can't catch those).
+_REPO_ROOT="$(git rev-parse --show-toplevel)"
+_RESOLVED="$(realpath --canonicalize-missing "$PLAN_DIR")"
+if [[ "$_RESOLVED" != "$_REPO_ROOT"/* ]]; then
+    echo "error: PLAN_DIR resolves outside repository root: $_RESOLVED" >&2
+    exit 1
+fi
+unset _REPO_ROOT _RESOLVED
 
 # --- config (override via env) ---
 MAX_ITERS="${MAX_ITERS:-40}"
