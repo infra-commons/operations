@@ -51,6 +51,10 @@ while IFS= read -r line; do
     [[ "$line" =~ ^[[:space:]]*# ]] && continue
     [[ -z "${line//[[:space:]]/}" ]] && continue
     plan="${line//[[:space:]]/}"
+    if [[ ! "$plan" =~ ^plans/[a-zA-Z0-9_-]+$ ]]; then
+        echo "skip (invalid plan name format): $plan" >&2
+        continue
+    fi
     if is_done "$plan"; then
         echo "skip (done): $plan"
         continue

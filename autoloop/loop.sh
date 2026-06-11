@@ -11,6 +11,10 @@ set -euo pipefail
 
 PLAN_DIR="${1:?Usage: ./loop.sh <plan-dir>   e.g. ./loop.sh plans/marketing-agents}"
 PLAN_DIR="${PLAN_DIR%/}"
+if [[ ! "$PLAN_DIR" =~ ^plans/[a-zA-Z0-9_-]+$ ]]; then
+    echo "error: PLAN_DIR must match plans/<name> (alphanumeric, hyphens, underscores only): $PLAN_DIR" >&2
+    exit 1
+fi
 
 # --- config (override via env) ---
 MAX_ITERS="${MAX_ITERS:-40}"
@@ -73,6 +77,11 @@ PLAN_DIR=$PLAN_DIR" \
         exit 75
     fi
 
+    if ! git diff --quiet -- "$VERIFY" 2>/dev/null; then
+        echo "  iter $i: verify.sh was modified — restoring and skipping commit" >&2
+        git checkout -- "$VERIFY"
+        continue
+    fi
     if bash "$VERIFY"; then
         git add -A
         git commit -q -m "autoloop($i): green — $(basename "$PLAN_DIR")" || echo "  (nothing to commit)"
