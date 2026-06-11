@@ -1,0 +1,14 @@
+[Unit]
+Description=Pace the {ORG_DISPLAY_NAME} autoloop
+
+[Timer]
+# Fire 3x/day at off-peak NZST times (server is UTC; NZST = UTC+12):
+#   14:00 UTC = 02:00 NZST  (quiet hours)
+#   02:00 UTC = 14:00 NZST  (early afternoon)
+#   08:00 UTC = 20:00 NZST  (evening)
+OnCalendar=*-*-* 02,08,14:00:00
+Persistent=true
+RandomizedDelaySec=600
+
+[Install]
+WantedBy=timers.target
