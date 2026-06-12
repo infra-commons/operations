@@ -10,10 +10,10 @@ WorkingDirectory=%h/repos/{ORG_DIR}/{REPO_NAME}
 # Subscription to use. Switch to rolliq if cashbucket usage is exhausted, or vice versa.
 # The CLAUDE_CONFIG_DIR determines which subscription pays for each autoloop run.
 # To switch: edit this line, then: systemctl --user daemon-reload && systemctl --user restart {ORG}-autoloop.timer
-Environment=CLAUDE_CONFIG_DIR=/home/kev/.claude-{ORG_SUBSCRIPTION}
+Environment=CLAUDE_CONFIG_DIR=%h/.claude-{ORG_SUBSCRIPTION}
 
-Environment=GH_CONFIG_DIR=/home/kev/.config/gh-{ORG}
-Environment=PATH=/home/kev/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=GH_CONFIG_DIR=%h/.config/gh-{ORG}
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
 
 # --- PRE-JUNE-15-2026 config (RUNNER=run-batch.sh, shared subscription pool) ---
 # On 15 Jun 2026: set RUNNER=./run-once.sh, uncomment BILLING_DAY + MONTHLY_CREDIT_USD

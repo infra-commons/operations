@@ -18,6 +18,10 @@ PLAN_DIR="${PLAN_DIR%/}"
 BILLING_DAY="${BILLING_DAY:?set BILLING_DAY=28 (your subscription renewal day)}"
 MONTHLY_CREDIT_USD="${MONTHLY_CREDIT_USD:-20}"
 LEDGER="${LEDGER:-.autoloop/spend-ledger}"
+if [[ "$LEDGER" = /* ]] || [[ "$LEDGER" =~ \.\. ]]; then
+    echo "error: LEDGER path must be relative and within the repo: $LEDGER" >&2
+    exit 1
+fi
 
 command -v jq   >/dev/null || { echo "jq required" >&2; exit 1; }
 command -v date >/dev/null || { echo "GNU date required" >&2; exit 1; }
