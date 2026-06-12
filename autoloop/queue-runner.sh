@@ -16,7 +16,13 @@
 # To skip a plan: prefix the line with #
 # To re-run a done plan: delete its autoloop/<plan> branch and re-run
 #
-# Post-June-15-2026: set RUNNER=./run-once.sh in rolliq-autoloop.service
+# Subscription fallback: set CLAUDE_CONFIG_DIRS to a colon-separated ordered list
+# of CLAUDE_CONFIG_DIR paths to try in sequence when exit 75 (subscription exhausted).
+# CLAUDE_CONFIG_DIRS takes precedence over CLAUDE_CONFIG_DIR when set.
+# Example: CLAUDE_CONFIG_DIRS=/home/kev/.claude-cashbucket:/home/kev/.claude-rolliq:/home/kev/.claude-klsjapan
+# After all entries exhausted: exits 75.
+#
+# Post-June-15-2026: set RUNNER=./run-once.sh in the autoloop service file
 # and the queue runner picks it up automatically.
 
 set -euo pipefail
@@ -69,4 +75,36 @@ if [[ -z "$PLAN_DIR" ]]; then
 fi
 
 echo "Running: $PLAN_DIR"
-exec env PLAN_DIR="$PLAN_DIR" "$RUNNER"
+
+# Build ordered subscription list.
+# CLAUDE_CONFIG_DIRS (colon-separated) takes precedence over CLAUDE_CONFIG_DIR.
+if [[ -n "${CLAUDE_CONFIG_DIRS:-}" ]]; then
+    IFS=':' read -ra SUB_DIRS <<< "$CLAUDE_CONFIG_DIRS"
+elif [[ -n "${CLAUDE_CONFIG_DIR:-}" ]]; then
+    SUB_DIRS=("$CLAUDE_CONFIG_DIR")
+else
+    SUB_DIRS=()
+fi
+
+if [[ ${#SUB_DIRS[@]} -eq 0 ]]; then
+    exec env PLAN_DIR="$PLAN_DIR" "$RUNNER"
+fi
+
+last_idx=$(( ${#SUB_DIRS[@]} - 1 ))
+for i in "${!SUB_DIRS[@]}"; do
+    dir="${SUB_DIRS[$i]}"
+    [[ -z "$dir" ]] && continue
+    echo "Trying subscription: $(basename "$dir")"
+    if [[ $i -eq $last_idx ]]; then
+        exec env PLAN_DIR="$PLAN_DIR" CLAUDE_CONFIG_DIR="$dir" "$RUNNER"
+    fi
+    exit_code=0
+    env PLAN_DIR="$PLAN_DIR" CLAUDE_CONFIG_DIR="$dir" "$RUNNER" || exit_code=$?
+    if [[ $exit_code -eq 75 ]]; then
+        echo "Subscription exhausted ($(basename "$dir")) — trying next."
+        continue
+    fi
+    exit $exit_code
+done
+# All subscriptions exhausted.
+exit 75
