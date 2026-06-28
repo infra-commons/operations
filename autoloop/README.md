@@ -25,7 +25,7 @@ of these scripts (seeded from here) plus org-specific `constitution.md`, `prompt
    - Copy `{org}-autoloop.timer.template` → `autoloop/{org}-autoloop.timer`
    - Fill in: org name, repo path, CLAUDE_CONFIG_DIR, GH_CONFIG_DIR, BILLING_DAY
 
-4. **Install systemd units (Kevin action):**
+4. **Install systemd units (operator action):**
    ```bash
    mkdir -p ~/.config/systemd/user
    cp autoloop/{org}-autoloop.service ~/.config/systemd/user/
@@ -56,16 +56,16 @@ Autonomous plan delivery across the {Org} tech stack.
 1. **Draft PRs only, and never merge.** Always `gh pr create --draft`. Never merge.
 2. **One unit of work per iteration.** Small, reviewable diff.
 3. **GitHub CLI config.** All {org-name} operations MUST use:
-   `GH_CONFIG_DIR=/home/kev/.config/gh-{org} gh ...`
+   `GH_CONFIG_DIR=$HOME/.config/gh-{org} gh ...`
 
 ## Authentication model
 
-- GitHub: `GH_CONFIG_DIR=/home/kev/.config/gh-{org}`
+- GitHub: `GH_CONFIG_DIR=$HOME/.config/gh-{org}`
 
 ## Blocked / needs human — when to stop
 
 Stop and record in `progress.md` when:
-- A step requires Kevin to take a web UI action
+- A step requires the operator to take a web UI action
 - Credentials are needed that aren't in the environment
 - An assumption is required that isn't settled in `vision.md`
 ```

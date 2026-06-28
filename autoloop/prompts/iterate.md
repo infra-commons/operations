@@ -15,8 +15,8 @@ Then do exactly this:
   "Blocked / needs human", and record any assumption you had to make.
 
 PAUSE and record "Blocked / needs human" in progress.md when:
-- A step requires Kevin to take a web UI action (e.g. creating a GitHub App via GitHub.com)
-- A step requires credentials Kevin hasn't provided yet
+- A step requires the operator to take a web UI action (e.g. creating a GitHub App via GitHub.com)
+- A step requires credentials the operator hasn't provided yet
 - An assumption is required that isn't settled in vision.md
 
 Stop signal:

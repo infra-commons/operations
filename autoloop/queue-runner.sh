@@ -19,7 +19,7 @@
 # Subscription fallback: set CLAUDE_CONFIG_DIRS to a colon-separated ordered list
 # of CLAUDE_CONFIG_DIR paths to try in sequence when exit 75 (subscription exhausted).
 # CLAUDE_CONFIG_DIRS takes precedence over CLAUDE_CONFIG_DIR when set.
-# Example: CLAUDE_CONFIG_DIRS=/home/kev/.claude-cashbucket:/home/kev/.claude-rolliq:/home/kev/.claude-klsjapan
+# Example: CLAUDE_CONFIG_DIRS=$HOME/.claude-<orgA>:$HOME/.claude-<orgB>
 # After all entries exhausted: exits 75.
 #
 # Post-June-15-2026: set RUNNER=./run-once.sh in the autoloop service file
